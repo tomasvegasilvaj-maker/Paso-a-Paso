@@ -8,6 +8,11 @@
 .tito .armR {
   transform-origin: 0% 50%;
 }
+.tito .humo {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
 .tito .e-l,
 .tito .e-w,
 .tito .e-z,
@@ -166,5 +171,111 @@
   }
   100% {
     transform: scale(1, 1);
+  }
+}
+
+/* Festejo del bloque de concentración: salto con giro. */
+.tito.gira .bd {
+  animation: tito-gira 0.9s cubic-bezier(0.3, 0.7, 0.4, 1);
+}
+.tito.gira .m-s {
+  opacity: 0;
+}
+.tito.gira .m-o {
+  opacity: 1;
+}
+@keyframes tito-gira {
+  0% {
+    transform: scale(1.12, 0.88);
+  }
+  45% {
+    transform: translateY(-50px) rotate(200deg);
+  }
+  70% {
+    transform: translateY(0) rotate(360deg) scale(1.12, 0.88);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+/* Cruza 2000: se enoja de las ganas y sacude el cuerpo. */
+.tito.enojo .bd {
+  animation: tito-enojo 0.7s ease-in-out;
+}
+@keyframes tito-enojo {
+  0%,
+  100% {
+    transform: none;
+  }
+  15% {
+    transform: scale(1.12) rotate(-8deg);
+  }
+  30% {
+    transform: scale(1.12) rotate(8deg);
+  }
+  45% {
+    transform: scale(1.1) rotate(-7deg);
+  }
+  60% {
+    transform: scale(1.08) rotate(6deg);
+  }
+  80% {
+    transform: scale(1.03) rotate(-2deg);
+  }
+}
+
+/* Bocanada: se estira, larga humo y vuelve con rebote (~0,6 s). */
+.tito.bocanada .bd {
+  animation: tito-bocanada 0.6s ease-out;
+}
+.tito.bocanada .humo {
+  animation: tito-humo 0.7s ease-out;
+}
+@keyframes tito-bocanada {
+  0% {
+    transform: none;
+  }
+  35% {
+    transform: scale(0.9, 1.15);
+  }
+  60% {
+    transform: scale(1.1, 0.9);
+  }
+  80% {
+    transform: scale(0.97, 1.03);
+  }
+  100% {
+    transform: none;
+  }
+}
+@keyframes tito-humo {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.4);
+  }
+  30% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-26px) scale(1.4);
+  }
+}
+
+/* Preocupado (apertura en azul): tiembla chiquito. */
+.tito.tiembla .bd {
+  animation: tito-tiembla 0.12s linear infinite;
+}
+@keyframes tito-tiembla {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-2px);
+  }
+  75% {
+    transform: translateX(2px);
   }
 }

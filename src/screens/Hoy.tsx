@@ -3,39 +3,31 @@ import { Tilde } from '../components/Tilde'
 import { Tito, type TitoEstado } from '../components/Tito'
 import { useTitoPoke } from '../components/useTitoPoke'
 import { MINIMO_DIARIO } from '../lib/racha'
+import { useContador } from '../lib/useContador'
 import type { Datos } from '../lib/useDatos'
-
-/** Número que sube o baja contando en 1 s (doc 03). */
-function useContador(valor: number) {
-  const [mostrado, setMostrado] = useState(valor)
-  const desde = useRef(valor)
-  useEffect(() => {
-    const inicio = desde.current
-    const t0 = performance.now()
-    let raf = 0
-    const paso = (t: number) => {
-      const k = Math.min(1, (t - t0) / 1000)
-      const v = Math.round(inicio + (valor - inicio) * (1 - (1 - k) ** 3))
-      desde.current = v
-      setMostrado(v)
-      if (k < 1) raf = requestAnimationFrame(paso)
-    }
-    raf = requestAnimationFrame(paso)
-    return () => cancelAnimationFrame(raf)
-  }, [valor])
-  return mostrado
-}
 
 export function Hoy({ datos, nombre }: { datos: Datos; nombre: string }) {
   const { estado, derivado, alternar } = datos
-  const { anim, poke } = useTitoPoke()
+  const { anim, poke, play } = useTitoPoke()
   const puntos = estado ? (estado.puntosPorDia[estado.hoy] ?? 0) : 0
   const mostrado = useContador(puntos)
+  // "+50" que sube desde el chip recién tildado; el contador cambia la key para repetirlo.
+  const [mas, setMas] = useState<{ id: string; n: number } | null>(null)
+
+  // Tito cambia en el momento exacto en que el contador cruza 2000 (doc 03).
+  const arriba = mostrado >= MINIMO_DIARIO
+  const antes = useRef(arriba)
+  useEffect(() => {
+    if (arriba === antes.current) return
+    antes.current = arriba
+    play(arriba ? 'enojo' : 'bocanada', arriba ? 800 : 700)
+  }, [arriba, play])
+
   if (!estado || !derivado) return null
 
   const { racha, seEncendioAlgunaVez } = derivado
   const encendido = puntos >= MINIMO_DIARIO
-  const titoEstado: TitoEstado = encendido
+  const titoEstado: TitoEstado = arriba
     ? 'rojo'
     : racha.estado === 'azul'
       ? 'azul'
@@ -46,10 +38,13 @@ export function Hoy({ datos, nombre }: { datos: Datos; nombre: string }) {
   const principales = estado.actividades.filter((a) => a.kind === 'principal')
   const bonus = estado.actividades.filter((a) => a.kind === 'bonus')
 
-  const tocar = async (id: string) => {
+  const tocar = (id: string, esBonus = false) => {
     const tildando = !estado.hechasHoy.has(id)
-    if (tildando) poke()
-    await alternar(id)
+    const cruza = tildando && puntos < MINIMO_DIARIO && puntos + (estado.actividades.find((a) => a.id === id)?.points ?? 0) >= MINIMO_DIARIO
+    // Festeja al tildar, salvo que vaya a enojarse por cruzar 2000.
+    if (tildando && !cruza) play(id === 'concentracion' ? 'gira' : 'salta', 950)
+    if (tildando && esBonus) setMas({ id, n: (mas?.n ?? 0) + 1 })
+    void alternar(id)
   }
 
   return (
@@ -67,8 +62,8 @@ export function Hoy({ datos, nombre }: { datos: Datos; nombre: string }) {
           <p className={`falta ${encendido ? 'hi' : 'lo'}`}>
             {encendido ? 'Fueguito encendido' : `Te faltan ${MINIMO_DIARIO - puntos} para el fueguito`}
           </p>
-          <div className={`barra ${encendido ? 'hi' : ''}`}>
-            <i style={{ width: `${Math.min(100, (puntos / MINIMO_DIARIO) * 100)}%` }} />
+          <div className={`barra ${arriba ? 'hi' : ''}`}>
+            <i style={{ width: `${Math.min(100, (mostrado / MINIMO_DIARIO) * 100)}%` }} />
           </div>
         </div>
       </div>
@@ -101,11 +96,20 @@ export function Hoy({ datos, nombre }: { datos: Datos; nombre: string }) {
               key={a.id}
               className={`chip hundir${hecho ? ' hecho' : ''}`}
               aria-pressed={hecho}
-              onClick={() => tocar(a.id)}
+              onClick={() => tocar(a.id, true)}
             >
-              <span>
+              <span className="chip-fondo" />
+              <span className="chip-txt">
+                <svg className="chip-check" viewBox="0 0 12 12" aria-hidden="true">
+                  <path pathLength={1} d="M2 6.5l2.5 2.5 5.5-6" />
+                </svg>
                 {a.name} · {a.points}
               </span>
+              {mas?.id === a.id && hecho && (
+                <span key={mas.n} className="mas" aria-hidden="true">
+                  +{a.points}
+                </span>
+              )}
             </button>
           )
         })}

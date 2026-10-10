@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import type { Session } from '@supabase/supabase-js'
+import { Apertura } from '../components/Apertura'
+import { ChipRacha } from '../components/ChipRacha'
 import { NavBar, type Section } from '../components/NavBar'
-import { Tito } from '../components/Tito'
+import { Tito, type TitoEstado } from '../components/Tito'
 import { useTitoPoke } from '../components/useTitoPoke'
 import { signOut } from '../lib/supabase'
 import { useDatos } from '../lib/useDatos'
@@ -13,7 +15,7 @@ import './Shell.css'
 import './pantallas.css'
 
 /** Logo de arriba a la izquierda: siempre amarillo; anima solo cada 10 a 15 s y al tocarlo (doc 02). */
-function Logo() {
+function Logo({ visible }: { visible: boolean }) {
   const { anim, poke } = useTitoPoke()
 
   useEffect(() => {
@@ -29,7 +31,7 @@ function Logo() {
   }, [poke])
 
   return (
-    <button className="shell-logo" onClick={poke} aria-label="Tito">
+    <button className={`shell-logo${visible ? ' llega' : ' oculto'}`} onClick={poke} aria-label="Tito">
       <Tito anim={anim} size={34} glow={false} />
     </button>
   )
@@ -39,7 +41,26 @@ export function Shell({ session }: { session: Session }) {
   const [section, setSection] = useState<Section>('hoy')
   const name = (session.user.user_metadata.full_name as string | undefined)?.split(' ')[0] ?? 'Tomi'
   const datos = useDatos()
-  const { derivado, error, limpiarError } = datos
+  const { estado, derivado, error, limpiarError } = datos
+  // Apertura: el logo aparece cuando llega el rayo; la racha apagada se anima después.
+  const [apertura, setApertura] = useState(true)
+  const [logoVisible, setLogoVisible] = useState(false)
+  const [apagando, setApagando] = useState(false)
+
+  let titoApertura: TitoEstado | null = null
+  if (estado && derivado) {
+    const { racha, seEncendioAlgunaVez } = derivado
+    titoApertura =
+      racha.estado === 'azul' ? 'azul' : racha.estado === 'apagado' && seEncendioAlgunaVez ? 'apagado' : 'amarillo'
+  }
+
+  const finApertura = () => {
+    setApertura(false)
+    if (derivado?.rachaPerdida) {
+      setApagando(true)
+      window.setTimeout(() => setApagando(false), 1000)
+    }
+  }
 
   useEffect(() => {
     if (!error) return
@@ -50,12 +71,15 @@ export function Shell({ session }: { session: Session }) {
   return (
     <div className="shell">
       <header className="shell-header">
-        <Logo />
+        <Logo visible={logoVisible} />
         <div className="shell-right">
           {derivado && (
-            <span className={`chip-racha ${derivado.racha.estado}`} aria-label={`Racha de ${derivado.racha.dias} días`}>
-              🔥 {derivado.racha.dias}
-            </span>
+            // Si la racha se cortó ayer, el chip arranca con su número, se apaga y baja girando a 0.
+            <ChipRacha
+              dias={derivado.rachaPerdida && (apertura || apagando) ? derivado.rachaPerdida : derivado.racha.dias}
+              estado={derivado.rachaPerdida && (apertura || apagando) ? 'azul' : derivado.racha.estado}
+              apagando={apagando}
+            />
           )}
           <button className="shell-out hundir" onClick={signOut}>
             Salir
@@ -82,6 +106,10 @@ export function Shell({ session }: { session: Session }) {
         <div className="aviso" role="alert" onClick={limpiarError}>
           {error}
         </div>
+      )}
+
+      {apertura && !(error && !estado) && (
+        <Apertura estado={titoApertura} nombre={name} onImpacto={() => setLogoVisible(true)} onFin={finApertura} />
       )}
 
       <NavBar current={section} onChange={setSection} />

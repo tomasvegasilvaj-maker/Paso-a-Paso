@@ -1,7 +1,8 @@
 import { useId } from 'react'
 import './Tito.css'
 
-export type TitoAnim = 'idle' | 'rie' | 'saluda' | 'guino' | 'salta'
+/** idle, reacciones al tocar, y las del doc 03: gira (festejo del bloque), enojo (cruza 2000), bocanada (baja de 2000), tiembla (preocupado). */
+export type TitoAnim = 'idle' | 'rie' | 'saluda' | 'guino' | 'salta' | 'gira' | 'enojo' | 'bocanada' | 'tiembla'
 
 /** amarillo = normal; rojo = llegó a 2000; azul = no llegó ayer; apagado = racha en 0 (doc 02). */
 export type TitoEstado = 'amarillo' | 'rojo' | 'azul' | 'apagado'
@@ -85,6 +86,12 @@ export function Tito({ anim, size = 180, glow = true, estado = 'amarillo' }: Pro
           <path d="M71 136 Q80 142 89 136" />
           <path d="M111 136 Q120 142 129 136" />
         </g>
+      </g>
+      {/* Nubecita de humo de la Bocanada, por la punta. */}
+      <g className="humo" fill="#bdbdbd">
+        <circle cx="100" cy="6" r="9" />
+        <circle cx="112" cy="-2" r="7" />
+        <circle cx="90" cy="-4" r="6" />
       </g>
       {dormido && (
         <text className="zz" x="160" y="40" fill="#8b8b88" fontSize="34" fontWeight="700">

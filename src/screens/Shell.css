@@ -57,3 +57,21 @@
   align-items: center;
   gap: 8px;
 }
+
+/* El logo espera a que llegue el rayo de la apertura y reaparece con rebote. */
+.shell-logo {
+  position: relative;
+  z-index: 60;
+}
+.shell-logo.oculto {
+  opacity: 0;
+}
+.shell-logo.llega {
+  animation: logo-llega 0.5s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+@keyframes logo-llega {
+  from {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+}

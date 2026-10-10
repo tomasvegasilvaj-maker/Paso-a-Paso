@@ -41,14 +41,14 @@ export function DiaDetalle({ day, actividades, libre }: Props) {
         </p>
       )}
       {hechas?.length === 0 && <p className="vacio">No hay actividades tildadas.</p>}
-      <ul className="detalle-lista">
+      <ul className="detalle-lista" key={hechas ? 'ok' : 'cargando'}>
         {hechas
           ?.toSorted((a, b) => orden(a.activity_id) - orden(b.activity_id))
-          .map((c) => {
+          .map((c, n) => {
             const bonus = tipo(c.activity_id) === 'bonus'
             return (
               <li key={c.id}>
-                <Tilde hecho gris={bonus} />
+                <Tilde hecho gris={bonus} cascada={0.15 + n * 0.09} />
                 <span className="nm">{c.activity_name}</span>
                 {bonus && <span className="etiqueta">bonus</span>}
                 <span className="p">{c.points}</span>

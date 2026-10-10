@@ -1,0 +1,154 @@
+.chip-racha {
+  transition:
+    color 0.5s,
+    box-shadow 0.4s,
+    padding 0.3s;
+  overflow: hidden;
+}
+.chip-racha.hito {
+  box-shadow:
+    0 0 0 1px rgba(255, 122, 47, 0.5),
+    0 0 18px rgba(255, 122, 47, 0.45);
+}
+
+.cr-llama-box {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+}
+.cr-llama {
+  display: inline-block;
+  transform-origin: 50% 90%;
+  transition: filter 0.5s;
+}
+.chip-racha.apagado .cr-llama {
+  filter: grayscale(1) brightness(0.7);
+}
+.cr-llama.aviva {
+  animation: cr-aviva 0.6s cubic-bezier(0.3, 1.5, 0.5, 1);
+}
+@keyframes cr-aviva {
+  0% {
+    transform: scale(0.6);
+  }
+  60% {
+    transform: scale(1.35);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Se apaga: parpadea dos veces, se achica hasta la leña y larga una bocanada. */
+.chip-racha.apagando .cr-llama {
+  animation: cr-apaga 0.9s ease-in forwards;
+}
+@keyframes cr-apaga {
+  0%,
+  30%,
+  60% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  15%,
+  45% {
+    opacity: 0.25;
+  }
+  100% {
+    opacity: 0.6;
+    transform: scale(0.35);
+    filter: grayscale(1);
+  }
+}
+.cr-humo {
+  position: absolute;
+  top: -2px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #bdbdbd;
+  opacity: 0;
+}
+.chip-racha.apagando .cr-humo {
+  animation: cr-humo 0.6s ease-out 0.7s;
+}
+@keyframes cr-humo {
+  0% {
+    opacity: 0.8;
+    transform: translateY(4px) scale(0.5);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-14px) scale(1.6);
+  }
+}
+
+/* Se reenciende: chispa amarilla sobre la leña. */
+.cr-chispa {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff6c2 0%, #ffd23f 40%, rgba(255, 210, 63, 0) 70%);
+  pointer-events: none;
+  animation: cr-chispa 0.55s ease-out forwards;
+}
+@keyframes cr-chispa {
+  0% {
+    opacity: 1;
+    transform: scale(0.3);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2);
+  }
+}
+
+/* Cuentakilómetros: los dos números apilados se deslizan. */
+.cr-num {
+  display: inline-block;
+  height: 1.2em;
+  line-height: 1.2em;
+  overflow: hidden;
+}
+.cr-odo {
+  display: flex;
+  flex-direction: column;
+}
+.cr-odo.sube {
+  animation: cr-sube 0.5s cubic-bezier(0.3, 1.3, 0.5, 1) forwards;
+}
+.cr-odo.baja {
+  animation: cr-baja 0.5s cubic-bezier(0.3, 1.3, 0.5, 1) forwards;
+}
+@keyframes cr-sube {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-1.2em);
+  }
+}
+@keyframes cr-baja {
+  from {
+    transform: translateY(-1.2em);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.cr-hito {
+  white-space: nowrap;
+  animation: cr-estira 0.4s ease-out;
+}
+@keyframes cr-estira {
+  from {
+    opacity: 0;
+    max-width: 0;
+  }
+  to {
+    opacity: 1;
+    max-width: 120px;
+  }
+}
