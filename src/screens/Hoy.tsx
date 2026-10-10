@@ -127,9 +127,7 @@ export function Hoy({ datos, nombre, rescate = false }: Props) {
         <section className="rescate screen">
           <div className="rescate-top">
             <b>Rescatá el fueguito</b>
-            <span>
-              {falta} pts · {Math.ceil(falta / 50)} bonus
-            </span>
+            <span>Te faltan {falta} pts</span>
           </div>
           {bonusPendientes.length > 0 && <div className="chips">{bonusPendientes.map(chip)}</div>}
           {rapidasPendientes.length > 0 && <div className="lista">{rapidasPendientes.map(fila)}</div>}
