@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { Session } from '@supabase/supabase-js'
 import { Apertura } from '../components/Apertura'
+import { BotonAvisos } from '../components/BotonAvisos'
 import { ChipRacha } from '../components/ChipRacha'
 import { NavBar, type Section } from '../components/NavBar'
 import { Tito, type TitoEstado } from '../components/Tito'
@@ -38,7 +39,19 @@ function Logo({ visible }: { visible: boolean }) {
 }
 
 export function Shell({ session }: { session: Session }) {
-  const [section, setSection] = useState<Section>('hoy')
+  // Los avisos abren la app con ?rescate=1 (22:15) o ?seccion=permitidos.
+  const [params] = useState(() => {
+    const p = new URLSearchParams(window.location.search)
+    if (p.size) window.history.replaceState(null, '', window.location.pathname)
+    return p
+  })
+  const [section, setSection] = useState<Section>(params.get('seccion') === 'permitidos' ? 'permitidos' : 'hoy')
+  const [mensaje, setMensaje] = useState<string | null>(null)
+  useEffect(() => {
+    if (!mensaje) return
+    const t = window.setTimeout(() => setMensaje(null), 4000)
+    return () => window.clearTimeout(t)
+  }, [mensaje])
   const name = (session.user.user_metadata.full_name as string | undefined)?.split(' ')[0] ?? 'Tomi'
   const datos = useDatos()
   const { estado, derivado, error, limpiarError } = datos
@@ -81,6 +94,7 @@ export function Shell({ session }: { session: Session }) {
               apagando={apagando}
             />
           )}
+          <BotonAvisos onMensaje={setMensaje} />
           <button className="shell-out hundir" onClick={signOut}>
             Salir
           </button>
@@ -92,7 +106,7 @@ export function Shell({ session }: { session: Session }) {
         {!datos.estado ? (
           <p className="shell-soon">{error ? `No se pudieron cargar los datos: ${error}` : 'Cargando…'}</p>
         ) : section === 'hoy' ? (
-          <Hoy datos={datos} nombre={name} />
+          <Hoy datos={datos} nombre={name} rescate={params.get('rescate') === '1'} />
         ) : section === 'progreso' ? (
           <Progreso datos={datos} />
         ) : section === 'calendario' ? (
@@ -101,6 +115,12 @@ export function Shell({ session }: { session: Session }) {
           <Permitidos datos={datos} />
         )}
       </main>
+
+      {mensaje && !error && (
+        <div className="mensaje screen" role="status" onClick={() => setMensaje(null)}>
+          {mensaje}
+        </div>
+      )}
 
       {error && datos.estado && (
         <div className="aviso" role="alert" onClick={limpiarError}>

@@ -1,4 +1,6 @@
 import { describe, expect, it } from 'vitest'
+import copiaAvisos from '../../supabase/functions/avisos/racha.ts?raw'
+import original from './racha.ts?raw'
 import {
   calcularRacha,
   esHito,
@@ -133,5 +135,11 @@ describe('faltaParaPermitido', () => {
 describe('formatoDia', () => {
   it('escribe en castellano con mayúscula inicial', () => {
     expect(formatoDia('2026-10-10', { weekday: 'long', day: 'numeric', month: 'long' })).toBe('Sábado, 10 de octubre')
+  })
+})
+
+describe('copia de la función avisos', () => {
+  it('supabase/functions/avisos/racha.ts es igual a src/lib/racha.ts', () => {
+    expect(copiaAvisos).toBe(original)
   })
 })

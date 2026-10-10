@@ -41,6 +41,27 @@ export type Database = {
         }
         Relationships: []
       }
+      avisos_enviados: {
+        Row: {
+          created_at: string
+          day: string
+          kind: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          day: string
+          kind: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          day?: string
+          kind?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       completions: {
         Row: {
           activity_id: string
@@ -118,6 +139,33 @@ export type Database = {
         }
         Relationships: []
       }
+      push_subscriptions: {
+        Row: {
+          auth: string
+          created_at: string
+          endpoint: string
+          id: string
+          p256dh: string
+          user_id: string
+        }
+        Insert: {
+          auth: string
+          created_at?: string
+          endpoint: string
+          id?: string
+          p256dh: string
+          user_id?: string
+        }
+        Update: {
+          auth?: string
+          created_at?: string
+          endpoint?: string
+          id?: string
+          p256dh?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       redemptions: {
         Row: {
           cost: number
@@ -154,8 +202,14 @@ export type Database = {
       }
     }
     Functions: {
+      avisos_config: { Args: never; Returns: Json }
+      avisos_guardar_vapid: {
+        Args: { p_private: string; p_public: string }
+        Returns: undefined
+      }
       redeem: { Args: { p_kind: string }; Returns: number }
       user_today: { Args: { p_user: string }; Returns: string }
+      vapid_public_key: { Args: never; Returns: string }
       wallet_balance: { Args: never; Returns: number }
     }
     Enums: {

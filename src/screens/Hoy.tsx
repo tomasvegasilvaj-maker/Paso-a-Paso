@@ -6,7 +6,14 @@ import { MINIMO_DIARIO } from '../lib/racha'
 import { useContador } from '../lib/useContador'
 import type { Datos } from '../lib/useDatos'
 
-export function Hoy({ datos, nombre }: { datos: Datos; nombre: string }) {
+type Props = {
+  datos: Datos
+  nombre: string
+  /** Se abrió desde el aviso de las 22:15: arriba aparece «Rescatá el fueguito» (doc 02). */
+  rescate?: boolean
+}
+
+export function Hoy({ datos, nombre, rescate = false }: Props) {
   const { estado, derivado, alternar } = datos
   const { anim, poke, play } = useTitoPoke()
   const puntos = estado ? (estado.puntosPorDia[estado.hoy] ?? 0) : 0
@@ -47,6 +54,54 @@ export function Hoy({ datos, nombre }: { datos: Datos; nombre: string }) {
     void alternar(id)
   }
 
+  const chip = (a: (typeof bonus)[number]) => {
+    const hecho = estado.hechasHoy.has(a.id)
+    return (
+      <button
+        key={a.id}
+        className={`chip hundir${hecho ? ' hecho' : ''}`}
+        aria-pressed={hecho}
+        onClick={() => tocar(a.id, true)}
+      >
+        <span className="chip-fondo" />
+        <span className="chip-txt">
+          <svg className="chip-check" viewBox="0 0 12 12" aria-hidden="true">
+            <path pathLength={1} d="M2 6.5l2.5 2.5 5.5-6" />
+          </svg>
+          {a.name} · {a.points}
+        </span>
+        {mas?.id === a.id && hecho && (
+          <span key={mas.n} className="mas" aria-hidden="true">
+            +{a.points}
+          </span>
+        )}
+      </button>
+    )
+  }
+
+  const fila = (a: (typeof principales)[number]) => {
+    const hecho = estado.hechasHoy.has(a.id)
+    return (
+      <button
+        key={a.id}
+        className={`act hundir${hecho ? ' hecho' : ''}`}
+        aria-pressed={hecho}
+        onClick={() => tocar(a.id)}
+      >
+        <Tilde hecho={hecho} />
+        <span className="nm">{a.name}</span>
+        <span className="p">{a.points}</span>
+      </button>
+    )
+  }
+
+  // Rescate: lo más rápido primero (bonus pendientes, después leer y meditar). Se va al llegar a 2000.
+  const RAPIDAS = ['leer', 'meditacion']
+  const enRescate = rescate && !encendido
+  const bonusPendientes = bonus.filter((a) => !estado.hechasHoy.has(a.id))
+  const rapidasPendientes = principales.filter((a) => RAPIDAS.includes(a.id) && !estado.hechasHoy.has(a.id))
+  const falta = MINIMO_DIARIO - puntos
+
   return (
     <div className="hoy">
       <h1 className="hoy-saludo">Hola, {nombre}</h1>
@@ -68,52 +123,37 @@ export function Hoy({ datos, nombre }: { datos: Datos; nombre: string }) {
         </div>
       </div>
 
+      {enRescate && (
+        <section className="rescate screen">
+          <div className="rescate-top">
+            <b>Rescatá el fueguito</b>
+            <span>
+              {falta} pts · {Math.ceil(falta / 50)} bonus
+            </span>
+          </div>
+          {bonusPendientes.length > 0 && <div className="chips">{bonusPendientes.map(chip)}</div>}
+          {rapidasPendientes.length > 0 && <div className="lista">{rapidasPendientes.map(fila)}</div>}
+        </section>
+      )}
+
       <p className="sec">Principales</p>
       <div className="lista">
-        {principales.map((a) => {
-          const hecho = estado.hechasHoy.has(a.id)
-          return (
-            <button
-              key={a.id}
-              className={`act hundir${hecho ? ' hecho' : ''}`}
-              aria-pressed={hecho}
-              onClick={() => tocar(a.id)}
-            >
-              <Tilde hecho={hecho} />
-              <span className="nm">{a.name}</span>
-              <span className="p">{a.points}</span>
-            </button>
-          )
-        })}
+        {principales.filter((a) => !(enRescate && rapidasPendientes.includes(a))).map(fila)}
       </div>
 
-      <p className="sec">Bonus</p>
-      <div className="chips">
-        {bonus.map((a) => {
-          const hecho = estado.hechasHoy.has(a.id)
-          return (
-            <button
-              key={a.id}
-              className={`chip hundir${hecho ? ' hecho' : ''}`}
-              aria-pressed={hecho}
-              onClick={() => tocar(a.id, true)}
-            >
-              <span className="chip-fondo" />
-              <span className="chip-txt">
-                <svg className="chip-check" viewBox="0 0 12 12" aria-hidden="true">
-                  <path pathLength={1} d="M2 6.5l2.5 2.5 5.5-6" />
-                </svg>
-                {a.name} · {a.points}
-              </span>
-              {mas?.id === a.id && hecho && (
-                <span key={mas.n} className="mas" aria-hidden="true">
-                  +{a.points}
-                </span>
-              )}
-            </button>
-          )
-        })}
-      </div>
+      {enRescate ? (
+        bonus.some((a) => estado.hechasHoy.has(a.id)) && (
+          <>
+            <p className="sec">Bonus hechas</p>
+            <div className="chips">{bonus.filter((a) => estado.hechasHoy.has(a.id)).map(chip)}</div>
+          </>
+        )
+      ) : (
+        <>
+          <p className="sec">Bonus</p>
+          <div className="chips">{bonus.map(chip)}</div>
+        </>
+      )}
       <p className="nota">Si te equivocaste, tocá de nuevo para destildar (solo hoy).</p>
     </div>
   )
