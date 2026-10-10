@@ -1,0 +1,150 @@
+.apertura {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: var(--bg);
+  transition: opacity 0.4s ease;
+  cursor: pointer;
+}
+.apertura.fase-sale {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ap-busca {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  animation: ap-respira 1.8s ease-in-out infinite;
+}
+@keyframes ap-respira {
+  50% {
+    transform: scale(1.06) rotate(-4deg);
+  }
+}
+
+.ap-centro {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+}
+.ap-tito {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: ap-sube 0.5s cubic-bezier(0.3, 1.3, 0.5, 1) both;
+}
+@keyframes ap-sube {
+  from {
+    opacity: 0;
+    transform: translateY(60px) scale(0.7);
+  }
+}
+.ap-lena {
+  width: 110px;
+  margin-top: -18px;
+}
+
+/* Tito se convierte en luz antes del rayo. */
+.fase-luz .ap-tito,
+.tipo-amarillo.fase-rayo .ap-tito,
+.tipo-azul.fase-rayo .ap-tito,
+.tipo-amarillo.fase-impacto .ap-tito,
+.tipo-azul.fase-impacto .ap-tito,
+.tipo-amarillo.fase-sale .ap-tito,
+.tipo-azul.fase-sale .ap-tito {
+  animation: ap-luz 0.22s ease-in forwards;
+}
+@keyframes ap-luz {
+  to {
+    opacity: 0;
+    transform: scale(0.15);
+    filter: brightness(3);
+  }
+}
+
+.ap-globo {
+  padding: 8px 14px;
+  border-radius: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-weight: 600;
+  animation: ap-globo 0.3s cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+@keyframes ap-globo {
+  from {
+    opacity: 0;
+    transform: scale(0.6) translateY(10px);
+  }
+}
+
+.ap-orbe {
+  position: fixed;
+  left: -9px;
+  top: -9px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+}
+.fase-rayo .ap-orbe {
+  opacity: 1;
+}
+
+.ap-rayo {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+.ap-rayo polyline {
+  fill: none;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  filter: drop-shadow(0 0 6px currentColor);
+  animation: ap-trazo ease-in forwards;
+}
+.fase-impacto .ap-rayo,
+.fase-sale .ap-rayo {
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+@keyframes ap-trazo {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Anillo de luz al impactar en el logo. */
+.ap-aro {
+  position: fixed;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border-radius: 50%;
+  border: 3px solid;
+  pointer-events: none;
+  animation: ap-aro 0.5s ease-out forwards;
+}
+@keyframes ap-aro {
+  from {
+    opacity: 1;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 0;
+    transform: scale(4);
+  }
+}

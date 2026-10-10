@@ -28,5 +28,18 @@ export function useTitoPoke() {
     }, 1100)
   }, [])
 
-  return { anim, poke }
+  /** Reproduce una animación puntual (festejo, enojo, bocanada) aunque haya otra en curso. */
+  const play = useCallback((a: TitoAnim, ms = 1000) => {
+    busy.current = true
+    setAnim('idle')
+    // Un cuadro en idle para que la animación arranque de cero aunque se repita.
+    requestAnimationFrame(() => setAnim(a))
+    window.clearTimeout(timer.current)
+    timer.current = window.setTimeout(() => {
+      busy.current = false
+      setAnim('idle')
+    }, ms)
+  }, [])
+
+  return { anim, poke, play }
 }

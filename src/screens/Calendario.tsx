@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type CSSProperties } from 'react'
 import { DiaDetalle } from '../components/DiaDetalle'
 import { formatoDia, inicioDeSemana, sumarDias, type Day } from '../lib/racha'
 import type { Datos } from '../lib/useDatos'
@@ -30,6 +30,8 @@ export function Calendario({ datos }: { datos: Datos }) {
   const mesActual = mes ?? estado.hoy.slice(0, 7)
   const nombreMes = formatoDia(`${mesActual}-15`, { month: 'long', year: 'numeric' })
   const { calendario } = derivado
+  const celdas = grilla(mesActual)
+  const posElegido = elegido ? celdas.indexOf(elegido) : -1
   const libres = new Set(estado.diasLibres)
   const hoyLlego = (estado.puntosPorDia[estado.hoy] ?? 0) >= 2000
 
@@ -65,11 +67,15 @@ export function Calendario({ datos }: { datos: Datos }) {
               {l}
             </span>
           ))}
-          {grilla(mesActual).map((d, i) =>
+        </div>
+        {/* Cambio de mes con fundido: la key reinicia la animación. */}
+        <div key={mesActual} className="cal-grid cal-dias screen">
+          {celdas.map((d, i) =>
             d ? (
               <button
                 key={d}
-                className={`cal-dia hundir ${claseDe(d)}${d === estado.hoy ? ' hoy' : ''}${d === elegido ? ' elegido' : ''}`}
+                className={`cal-dia hundir ${claseDe(d)}${d === estado.hoy ? ' hoy' : ''}`}
+                aria-pressed={d === elegido}
                 onClick={() => setElegido(d === elegido ? null : d)}
                 aria-label={d}
               >
@@ -78,6 +84,13 @@ export function Calendario({ datos }: { datos: Datos }) {
             ) : (
               <span key={`v${i}`} />
             ),
+          )}
+          {/* Aro amarillo que se desliza del día anterior al nuevo. */}
+          {posElegido >= 0 && (
+            <span
+              className="cal-aro"
+              style={{ '--col': posElegido % 7, '--fila': Math.floor(posElegido / 7) } as CSSProperties}
+            />
           )}
         </div>
         <div className="leyenda">

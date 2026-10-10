@@ -107,18 +107,27 @@ export function Progreso({ datos }: { datos: Datos }) {
               </text>
             ) : null,
           )}
-          {linea && <path d={linea} className="linea" />}
-          {puntos.map(({ d, i, p }) => (
-            <g key={d} onClick={() => setElegido(d)} className="punto">
-              <circle cx={x(i)} cy={y(p)} r={14} fill="transparent" />
-              <circle
-                cx={x(i)}
-                cy={y(p)}
-                r={elegido === d ? 6 : 4}
-                className={p >= MINIMO_DIARIO ? 'hi' : 'lo'}
-              />
-            </g>
-          ))}
+          {/* Redibujar: la key cambia con la vista y el período, así la línea se dibuja de nuevo. */}
+          <g key={`${vista}${offset}`}>
+            {linea && <path d={linea} pathLength={1} className="linea" />}
+            {puntos.map(({ d, i, p }, k) => {
+              const sel = elegido === d
+              return (
+                <g
+                  key={d}
+                  onClick={() => setElegido(d)}
+                  className={`punto${sel ? ' sel' : ''}`}
+                  // Los puntos aparecen cuando la línea pasa por ellos.
+                  style={{ animationDelay: `${(k / Math.max(1, puntos.length - 1)) * 0.8}s` }}
+                >
+                  {sel && <line x1={x(i)} x2={x(i)} y1={y(p)} y2={H - PAD.b} className="guia-punto" />}
+                  <circle cx={x(i)} cy={y(p)} r={14} fill="transparent" />
+                  {sel && <circle cx={x(i)} cy={y(p)} r={13} className="aro-punto" />}
+                  <circle cx={x(i)} cy={y(p)} r={5} className={`dot ${p >= MINIMO_DIARIO ? 'hi' : 'lo'}`} />
+                </g>
+              )
+            })}
+          </g>
         </svg>
         <p className="nota">Tocá un punto para ver el día.</p>
       </div>

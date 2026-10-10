@@ -52,5 +52,5 @@ Las reglas del producto, las pantallas y las animaciones están en los documento
 1. ✅ PWA base + login con Google + Supabase
 2. ✅ Modelo de datos y reglas de puntos/racha
 3. ✅ Pantallas Hoy, Progreso, Calendario y Permitidos (faltan eventos de Google Calendar, resumen semanal y pantalla de Tito)
-4. Animaciones del doc 03
+4. ✅ Animaciones del doc 03 (faltan las del resumen semanal y de la carga de Google Calendar, que llegan con esas pantallas)
 5. Notificaciones (pg_cron + Edge Function + Web Push)

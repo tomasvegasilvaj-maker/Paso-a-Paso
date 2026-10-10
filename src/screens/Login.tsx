@@ -1,10 +1,10 @@
 import { useState } from 'react'
-import { Tito } from '../components/Tito'
+import { Tito, type TitoAnim } from '../components/Tito'
 import { useTitoPoke } from '../components/useTitoPoke'
 import { signInWithGoogle, supabase } from '../lib/supabase'
 import './Login.css'
 
-const LABELS = { idle: 'Tocá a Tito', rie: 'Jaja', saluda: '¡Hola!', guino: 'Vos podés', salta: '¡Vamos!' }
+const LABELS: Partial<Record<TitoAnim, string>> = { idle: 'Tocá a Tito', rie: 'Jaja', saluda: '¡Hola!', guino: 'Vos podés', salta: '¡Vamos!' }
 
 export function Login() {
   const { anim, poke } = useTitoPoke()

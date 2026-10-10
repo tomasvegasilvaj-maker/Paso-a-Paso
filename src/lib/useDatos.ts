@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import * as api from './data'
-import { calcularRacha, estadosPorDia, hoyEn, MINIMO_DIARIO, type Day, type Permitido } from './racha'
+import { calcularRacha, estadosPorDia, hoyEn, MINIMO_DIARIO, sumarDias, type Day, type Permitido } from './racha'
 
 type Estado = {
   timezone: string
@@ -61,8 +61,12 @@ export function useDatos() {
     if (!estado) return null
     const entrada = { puntosPorDia: estado.puntosPorDia, diasLibres: estado.diasLibres, desde: estado.desde, hoy: estado.hoy }
     const calendario = estadosPorDia(entrada)
+    const racha = calcularRacha(entrada)
+    // Si la racha se cortó justo ayer, la apertura muestra cómo se apaga desde el número que tenía.
+    const ayer = calcularRacha({ ...entrada, hoy: sumarDias(estado.hoy, -1) })
     return {
-      racha: calcularRacha(entrada),
+      racha,
+      rachaPerdida: racha.estado === 'apagado' && ayer.estado === 'azul' ? ayer.dias : 0,
       calendario,
       // Para no mostrar a Tito dormido a alguien que recién empieza.
       seEncendioAlgunaVez: Object.values(calendario).some((e) => e !== 'apagado' && e !== 'libre'),

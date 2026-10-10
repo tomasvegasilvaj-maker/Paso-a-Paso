@@ -190,9 +190,24 @@
   flex: none;
   border-radius: 5px;
   border: 2px solid var(--text-3);
-  transition:
-    background 0.25s,
-    border-color 0.25s;
+  transition: border-color 0.25s;
+}
+/* El relleno amarillo: aparece de golpe al tildar y se enrolla en diagonal al destildar. */
+.tilde::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 5px;
+  background: var(--tito);
+  clip-path: polygon(0 100%, 0 100%, 0 100%);
+  transition: clip-path 0.6s cubic-bezier(0.5, 0, 0.3, 1);
+}
+.tilde.hecho::before {
+  clip-path: polygon(0 100%, 200% 100%, 0 -100%);
+  transition: none;
+}
+.tilde.gris::before {
+  background: var(--text-3);
 }
 .tilde svg {
   position: absolute;
@@ -208,18 +223,31 @@
   stroke-linejoin: round;
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
-  transition: stroke-dashoffset 0.5s ease;
+  transition: stroke-dashoffset 0.6s ease;
 }
 .tilde.hecho {
-  background: var(--tito);
   border-color: var(--tito);
 }
 .tilde.hecho.gris {
-  background: var(--text-3);
   border-color: var(--text-3);
 }
 .tilde.hecho path {
   stroke-dashoffset: 0;
+}
+/* Al destildar el trazo se va enseguida, con el enrollado. */
+.tilde:not(.hecho) path {
+  transition-duration: 0.15s;
+}
+.tilde.cascada.hecho path {
+  animation: tilde-trazo 0.6s ease var(--cascada) both;
+}
+@keyframes tilde-trazo {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
 }
 
 .chips {
@@ -229,7 +257,6 @@
 }
 .chip {
   position: relative;
-  overflow: hidden;
   min-height: 36px;
   padding: 0 13px;
   border-radius: 999px;
@@ -240,7 +267,14 @@
   font-weight: 600;
   cursor: pointer;
 }
-.chip::before {
+.chip-fondo {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  overflow: hidden;
+}
+/* Relleno: el amarillo entra de izquierda a derecha con un leve pop y se vacía de derecha a izquierda. */
+.chip-fondo::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -249,14 +283,65 @@
   transform-origin: left;
   transition: transform 0.35s cubic-bezier(0.3, 1.4, 0.5, 1);
 }
-.chip span {
-  position: relative;
+.chip.hecho .chip-fondo::before {
+  transform: scaleX(1);
 }
 .chip.hecho {
   color: #1a1400;
+  animation: chip-pop 0.4s ease;
 }
-.chip.hecho::before {
-  transform: scaleX(1);
+@keyframes chip-pop {
+  40% {
+    transform: scale(1.06);
+  }
+}
+.chip-txt {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.chip-check {
+  width: 0;
+  height: 11px;
+  overflow: visible;
+  transition: width 0.2s;
+}
+.chip.hecho .chip-check {
+  width: 11px;
+}
+.chip-check path {
+  fill: none;
+  stroke: #1a1400;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 0.3s ease 0.15s;
+}
+.chip.hecho .chip-check path {
+  stroke-dashoffset: 0;
+}
+.mas {
+  position: absolute;
+  left: 50%;
+  top: -4px;
+  color: var(--tito);
+  font-size: 12px;
+  font-weight: 800;
+  pointer-events: none;
+  animation: mas-sube 0.7s ease-out forwards;
+}
+@keyframes mas-sube {
+  from {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -22px);
+  }
 }
 
 /* ---------- Progreso y Calendario ---------- */
@@ -364,9 +449,56 @@
   stroke: #8b8b88;
   stroke-width: 2;
   stroke-linejoin: round;
+  stroke-dasharray: 1;
+  /* La línea se dibuja de izquierda a derecha. */
+  animation: linea-dibuja 0.8s ease-out both;
+}
+@keyframes linea-dibuja {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
 }
 .grafico .punto {
   cursor: pointer;
+  animation: punto-aparece 0.25s ease-out both;
+}
+@keyframes punto-aparece {
+  from {
+    opacity: 0;
+  }
+}
+.grafico .dot {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 0.35s cubic-bezier(0.3, 1.8, 0.5, 1);
+}
+/* Punto tocado: crece de 5 a 9 con rebote, anillo amarillo y guía punteada. */
+.grafico .punto.sel .dot {
+  transform: scale(1.8);
+}
+.grafico .aro-punto {
+  fill: none;
+  stroke: var(--tito);
+  stroke-width: 2;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: aro-punto 0.35s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+@keyframes aro-punto {
+  from {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+}
+.grafico .guia-punto {
+  stroke: var(--tito);
+  stroke-width: 1.2;
+  stroke-dasharray: 3 3;
+  opacity: 0.7;
+  animation: punto-aparece 0.3s ease-out;
 }
 .grafico circle.hi {
   fill: var(--fuego);
@@ -438,6 +570,9 @@
   gap: 5px;
   margin-top: 12px;
 }
+.cal-grid.cal-dias {
+  margin-top: 4px;
+}
 .cal-dow {
   text-align: center;
   font-size: 11px;
@@ -483,9 +618,26 @@
 .cal-dia.hoy {
   box-shadow: inset 0 0 0 2px var(--tito);
 }
-.cal-dia.elegido {
-  background: var(--text);
-  color: var(--bg);
+.cal-dias {
+  position: relative;
+  margin-top: 4px;
+  container-type: inline-size;
+  --celda: calc((100cqw - 30px) / 7);
+}
+.cal-aro {
+  position: absolute;
+  left: calc(var(--col) * (var(--celda) + 5px));
+  top: calc(var(--fila) * (var(--celda) + 5px));
+  width: var(--celda);
+  height: var(--celda);
+  border-radius: 12px;
+  box-shadow:
+    0 0 0 2px var(--tito),
+    0 0 12px rgba(255, 210, 63, 0.35);
+  pointer-events: none;
+  transition:
+    left 0.4s cubic-bezier(0.3, 1.3, 0.5, 1),
+    top 0.4s cubic-bezier(0.3, 1.3, 0.5, 1);
 }
 
 .leyenda {
@@ -565,6 +717,8 @@
   font-variant-numeric: tabular-nums;
 }
 .canjear {
+  position: relative;
+  overflow: hidden;
   margin-top: 12px;
   width: 100%;
   min-height: 46px;
@@ -575,6 +729,69 @@
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
+  transition:
+    transform 0.12s,
+    filter 0.12s;
+}
+.canjear:active {
+  transform: scale(0.98);
+}
+/* Amarillo apagado cuando no alcanza. */
+.canjear.apagado {
+  background: rgba(255, 210, 63, 0.28);
+  color: rgba(255, 240, 200, 0.75);
+}
+.canjear.apagado:active {
+  transform: none;
+}
+.tiembla {
+  animation: tiembla 0.4s ease-in-out;
+}
+@keyframes tiembla {
+  20% {
+    transform: translateX(-6px);
+  }
+  40% {
+    transform: translateX(5px);
+  }
+  60% {
+    transform: translateX(-4px);
+  }
+  80% {
+    transform: translateX(2px);
+  }
+}
+
+/* Onda: luz desde el punto tocado. */
+.onda {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0) 60%);
+  pointer-events: none;
+  animation: onda 0.6s ease-out forwards;
+}
+@keyframes onda {
+  from {
+    transform: scale(0);
+    opacity: 1;
+  }
+  to {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+.moneda {
+  position: fixed;
+  left: -6px;
+  top: -6px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fff4b0, #ffd23f 55%, #d99a00);
+  box-shadow: 0 0 6px rgba(255, 210, 63, 0.6);
+  pointer-events: none;
+  z-index: 30;
 }
 
 .canje-ok {
