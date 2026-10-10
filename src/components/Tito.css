@@ -10,8 +10,38 @@
 }
 .tito .e-l,
 .tito .e-w,
+.tito .e-z,
 .tito .m-o {
   opacity: 0;
+}
+
+/* Apagado: duerme, sin flotar, con una "z" que sube. */
+.tito.dormido .e-n {
+  opacity: 0;
+}
+.tito.dormido .e-z {
+  opacity: 1;
+}
+.tito.dormido .zz {
+  animation: tito-zz 2.4s ease-in-out infinite;
+}
+@keyframes tito-zz {
+  0% {
+    opacity: 0;
+    transform: translate(0, 10px);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(8px, -14px);
+  }
+}
+
+.tito .bd path,
+.tito .bd circle {
+  transition: fill 0.5s ease;
 }
 
 .tito.idle .bd {
