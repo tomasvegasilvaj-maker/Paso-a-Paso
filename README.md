@@ -9,11 +9,10 @@ Necesitás Node 20 o más nuevo.
 
 ```bash
 npm install
-cp .env.example .env.local   # completá las claves de Supabase
-npm run dev                  # http://localhost:5173
+npm run dev   # http://localhost:5173
 ```
 
-Sin `.env.local` la app abre igual, pero la pantalla de entrada avisa que falta configurar Supabase.
+El archivo `.env` ya trae la URL y la clave publicable del proyecto de Supabase `paso-a-paso` (son públicas). Para apuntar a otro proyecto, copiá `.env.example` a `.env.local` y completalo.
 
 | Comando | Qué hace |
 | --- | --- |
@@ -24,9 +23,9 @@ Sin `.env.local` la app abre igual, pero la pantalla de entrada avisa que falta 
 
 ## Configurar el login con Google (una sola vez)
 
-1. **Supabase:** creá un proyecto gratis en [supabase.com](https://supabase.com). En *Project Settings > API Keys* copiá la URL y la clave publicable a `.env.local`.
+1. **Supabase:** el proyecto `paso-a-paso` ya está creado y sus claves están en `.env`.
 2. **Google Cloud:** en [console.cloud.google.com](https://console.cloud.google.com) creá un proyecto, configurá la pantalla de consentimiento (tipo *External*, en modo prueba, con tu cuenta como tester) y habilitá la **Google Calendar API**.
-3. Creá una credencial **OAuth client ID** de tipo *Web application*. En *Authorized redirect URIs* poné la URL de callback que muestra Supabase en *Authentication > Sign In / Providers > Google* (es `https://<tu-proyecto>.supabase.co/auth/v1/callback`).
+3. Creá una credencial **OAuth client ID** de tipo *Web application*. En *Authorized redirect URIs* poné la URL de callback que muestra Supabase en *Authentication > Sign In / Providers > Google* (es `https://izdfvzjkypcqxuspsxsm.supabase.co/auth/v1/callback`).
 4. En Supabase, activá el proveedor **Google** y pegá el Client ID y el Client Secret.
 5. En Supabase, *Authentication > URL Configuration*: agregá `http://localhost:5173` (y más adelante la URL donde se publique la app) en *Redirect URLs*.
 
