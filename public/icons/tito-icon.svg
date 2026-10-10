@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Ícono de la app: la cara de Tito ocupa todo el cuadrado (doc 02). -->
+  <defs>
+    <radialGradient id="g" cx="38%" cy="34%" r="80%">
+      <stop offset="0%" stop-color="#fff4b0"/>
+      <stop offset="50%" stop-color="#ffd23f"/>
+      <stop offset="100%" stop-color="#e0a300"/>
+    </radialGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#g)"/>
+  <ellipse cx="150" cy="150" rx="70" ry="40" fill="rgba(255,255,255,0.35)" transform="rotate(-30 150 150)"/>
+  <ellipse cx="140" cy="318" rx="44" ry="24" fill="#ff6b6b" opacity="0.35"/>
+  <ellipse cx="372" cy="318" rx="44" ry="24" fill="#ff6b6b" opacity="0.35"/>
+  <ellipse cx="184" cy="248" rx="30" ry="42" fill="#2a1a04"/>
+  <ellipse cx="328" cy="248" rx="30" ry="42" fill="#2a1a04"/>
+  <circle cx="196" cy="229" r="10" fill="#fff"/>
+  <circle cx="340" cy="229" r="10" fill="#fff"/>
+  <path d="M222 330 Q256 358 290 330" fill="none" stroke="#2a1a04" stroke-width="15" stroke-linecap="round"/>
+</svg>

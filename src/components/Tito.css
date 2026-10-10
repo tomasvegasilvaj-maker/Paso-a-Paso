@@ -1,0 +1,140 @@
+/* Tito en reposo flota y parpadea; al tocarlo hace una animación al azar (doc 02 y lienzo). */
+.tito .bd,
+.tito .arm,
+.tito .eyes {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.tito .armR {
+  transform-origin: 0% 50%;
+}
+.tito .e-l,
+.tito .e-w,
+.tito .m-o {
+  opacity: 0;
+}
+
+.tito.idle .bd {
+  animation: tito-bob 3s ease-in-out infinite;
+}
+.tito.idle .eyes {
+  animation: tito-blink 4.5s infinite;
+}
+
+.tito.rie .bd {
+  animation: tito-laugh 0.9s ease-in-out;
+}
+.tito.rie .e-n,
+.tito.rie .m-s {
+  opacity: 0;
+}
+.tito.rie .e-l,
+.tito.rie .m-o {
+  opacity: 1;
+}
+
+.tito.saluda .armR {
+  animation: tito-wave 0.9s ease-in-out;
+}
+.tito.saluda .bd {
+  animation: tito-tilt 0.9s ease-in-out;
+}
+
+.tito.guino .e-n {
+  opacity: 0;
+}
+.tito.guino .e-w {
+  opacity: 1;
+}
+.tito.guino .bd {
+  animation: tito-tilt 0.9s ease-in-out;
+}
+
+.tito.salta .bd {
+  animation: tito-jump 0.9s cubic-bezier(0.3, 0.7, 0.4, 1);
+}
+.tito.salta .m-s {
+  opacity: 0;
+}
+.tito.salta .m-o {
+  opacity: 1;
+}
+
+@keyframes tito-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+@keyframes tito-blink {
+  0%,
+  94%,
+  100% {
+    transform: scaleY(1);
+  }
+  96% {
+    transform: scaleY(0.1);
+  }
+}
+@keyframes tito-laugh {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  20% {
+    transform: rotate(-5deg) translateY(-4px);
+  }
+  40% {
+    transform: rotate(5deg);
+  }
+  60% {
+    transform: rotate(-4deg) translateY(-4px);
+  }
+  80% {
+    transform: rotate(3deg);
+  }
+}
+@keyframes tito-wave {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  20%,
+  60% {
+    transform: rotate(-55deg);
+  }
+  40%,
+  80% {
+    transform: rotate(-15deg);
+  }
+}
+@keyframes tito-tilt {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  30%,
+  70% {
+    transform: rotate(6deg);
+  }
+}
+@keyframes tito-jump {
+  0% {
+    transform: scale(1.12, 0.88);
+  }
+  35% {
+    transform: translateY(-46px) scale(0.92, 1.08);
+  }
+  65% {
+    transform: translateY(0) scale(1.14, 0.86);
+  }
+  82% {
+    transform: scale(0.97, 1.03);
+  }
+  100% {
+    transform: scale(1, 1);
+  }
+}
