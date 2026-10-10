@@ -1,0 +1,57 @@
+.navbar {
+  position: fixed;
+  left: 50%;
+  bottom: max(16px, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  width: min(358px, calc(100% - 32px));
+  padding: 6px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  z-index: 10;
+}
+
+.navbar-track {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.navbar-bubble {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-radius: 999px;
+  background: var(--text);
+}
+
+.navbar-btn {
+  position: relative;
+  z-index: 1;
+  height: 46px;
+  border: none;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+}
+
+/* El ícono nuevo se oculta y aparece despacio cuando la burbuja termina de llegar (~0,46 s). */
+.navbar-btn.on svg {
+  animation: navbar-aparece 0.5s ease-out 0.46s both;
+}
+.navbar-btn.on.first svg {
+  animation: none;
+}
+@keyframes navbar-aparece {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
