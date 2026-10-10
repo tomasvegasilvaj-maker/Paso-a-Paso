@@ -20,6 +20,7 @@ El archivo `.env` ya trae la URL y la clave publicable del proyecto de Supabase 
 | `npm run build` | Chequea tipos y arma la versión final en `dist/` |
 | `npm run preview` | Sirve `dist/` para probar la PWA instalable y el modo offline |
 | `npm run lint` | Linter (oxlint) |
+| `npm test` | Tests de las reglas de racha (vitest) |
 
 ## Configurar el login con Google (una sola vez)
 
@@ -35,9 +36,10 @@ El login pide permiso de **lectura** de Google Calendar, porque en la v1 se mues
 
 ```
 src/
-  lib/          cliente de Supabase y sesión
+  lib/          cliente de Supabase, sesión, datos (data.ts) y reglas de racha (racha.ts)
   components/   Tito y la barra inferior
   screens/      entrada (login) y el armazón con las 4 secciones
+supabase/migrations/  tablas, permisos (RLS) y reglas de la base
 public/icons/   ícono de la app (cara de Tito); los PNG se generan con scripts/generate-icons.mjs
 ```
 
@@ -48,7 +50,7 @@ Las reglas del producto, las pantallas y las animaciones están en los documento
 ## Orden de construcción
 
 1. ✅ PWA base + login con Google + Supabase
-2. Modelo de datos y reglas de puntos/racha
+2. ✅ Modelo de datos y reglas de puntos/racha
 3. Pantallas
 4. Animaciones del doc 03
 5. Notificaciones (pg_cron + Edge Function + Web Push)
