@@ -1,0 +1,603 @@
+/* Pantallas Hoy, Progreso, Calendario y Permitidos (doc 02 y lienzo v31). */
+
+.sec,
+.lbl {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.sec {
+  margin-top: 10px;
+}
+.nota,
+.vacio {
+  font-size: 12px;
+  color: var(--text-3);
+}
+
+.tarjeta,
+.hoy-tarjeta,
+.permitido,
+.billetera,
+.detalle {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 14px 16px;
+}
+
+.chip-racha {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 30px;
+  padding: 0 11px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.chip-racha.rojo {
+  color: var(--fuego);
+}
+.chip-racha.azul {
+  color: #6f95ff;
+}
+.chip-racha.apagado {
+  color: var(--text-3);
+}
+
+.barra {
+  height: 5px;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.07);
+  overflow: hidden;
+  margin-top: 6px;
+}
+.barra i {
+  display: block;
+  height: 100%;
+  border-radius: 9px;
+  background: var(--celeste);
+  transition:
+    width 1s ease,
+    background 0.3s;
+}
+.barra.hi i {
+  background: var(--fuego);
+}
+
+.falta {
+  font-size: 12px;
+  font-weight: 700;
+  margin-top: 4px;
+  font-variant-numeric: tabular-nums;
+}
+.falta.lo {
+  color: var(--celeste);
+}
+.falta.hi {
+  color: var(--fuego);
+}
+
+/* ---------- Hoy ---------- */
+
+.hoy {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.hoy-saludo {
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+/* El saludo se difumina al scrollear y la tarjeta queda pegada arriba (lienzo v31). */
+@supports (animation-timeline: scroll()) {
+  .hoy-saludo {
+    animation: difuminar linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 80px;
+  }
+}
+@keyframes difuminar {
+  to {
+    opacity: 0;
+    filter: blur(4px);
+  }
+}
+
+.hoy-tarjeta {
+  position: sticky;
+  top: 8px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 18px 24px -6px var(--bg);
+}
+.hoy-tito {
+  width: 66px;
+  height: 72px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+}
+.hoy-num {
+  flex: 1;
+  min-width: 0;
+}
+.pts {
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.pts small {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-2);
+  letter-spacing: 0;
+}
+
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.act {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  text-align: left;
+  font-size: 14px;
+  cursor: pointer;
+}
+.act .nm {
+  flex: 1;
+  font-weight: 500;
+}
+.act.hecho .nm {
+  color: var(--text-2);
+}
+.act .p,
+.detalle-lista .p {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.tilde {
+  position: relative;
+  width: 17px;
+  height: 17px;
+  flex: none;
+  border-radius: 5px;
+  border: 2px solid var(--text-3);
+  transition:
+    background 0.25s,
+    border-color 0.25s;
+}
+.tilde svg {
+  position: absolute;
+  inset: -2px;
+  width: 17px;
+  height: 17px;
+}
+.tilde path {
+  fill: none;
+  stroke: #1a1400;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 0.5s ease;
+}
+.tilde.hecho {
+  background: var(--tito);
+  border-color: var(--tito);
+}
+.tilde.hecho.gris {
+  background: var(--text-3);
+  border-color: var(--text-3);
+}
+.tilde.hecho path {
+  stroke-dashoffset: 0;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.chip {
+  position: relative;
+  overflow: hidden;
+  min-height: 36px;
+  padding: 0 13px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-2);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.chip::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--tito);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+.chip span {
+  position: relative;
+}
+.chip.hecho {
+  color: #1a1400;
+}
+.chip.hecho::before {
+  transform: scaleX(1);
+}
+
+/* ---------- Progreso y Calendario ---------- */
+
+.progreso,
+.calendario,
+.permitidos {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.progreso h1,
+.calendario h1,
+.permitidos h1 {
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.segmentos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 4px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+.segmentos button {
+  min-height: 34px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-2);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.segmentos button[aria-selected='true'] {
+  background: var(--text);
+  color: var(--bg);
+}
+
+.periodo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 600;
+}
+.flecha {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.05);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+.flecha:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.resumen {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 10px 0 4px;
+}
+.grande {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.resumen small {
+  color: var(--text-2);
+  font-size: 12px;
+}
+
+.grafico {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+.grafico .guia {
+  stroke: rgba(255, 255, 255, 0.06);
+}
+.grafico .minimo {
+  stroke: var(--celeste);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 4;
+}
+.grafico .eje {
+  fill: var(--text-3);
+  font-size: 10px;
+}
+.grafico .eje.hoy {
+  fill: var(--tito);
+  font-weight: 700;
+}
+.grafico .linea {
+  fill: none;
+  stroke: #8b8b88;
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+.grafico .punto {
+  cursor: pointer;
+}
+.grafico circle.hi {
+  fill: var(--fuego);
+}
+.grafico circle.lo {
+  fill: var(--celeste);
+}
+
+.detalle {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.detalle-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+.detalle-top h2 {
+  font-size: 15px;
+  font-weight: 600;
+}
+.detalle-total {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.detalle-estado {
+  font-size: 12px;
+  font-weight: 700;
+}
+.detalle-estado.hi {
+  color: var(--fuego);
+}
+.detalle-estado.lo {
+  color: var(--celeste);
+}
+.detalle-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.detalle-lista li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+}
+.detalle-lista .nm {
+  flex: 1;
+}
+.etiqueta {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-3);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 1px 7px;
+}
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 5px;
+  margin-top: 12px;
+}
+.cal-dow {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-3);
+  padding-bottom: 2px;
+}
+.cal-dia {
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border-radius: 12px;
+  border: none;
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+.cal-dia.rojo {
+  background: rgba(255, 122, 47, 0.22);
+  color: #ffb080;
+}
+.cal-dia.azul {
+  background: rgba(59, 108, 240, 0.25);
+  color: #a9c2ff;
+}
+.cal-dia.apagado {
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--text-3);
+}
+.cal-dia.libre {
+  background: transparent;
+  outline: 1.5px dashed var(--text-3);
+  outline-offset: -3px;
+}
+.cal-dia.futuro,
+.cal-dia.antes {
+  background: transparent;
+  color: var(--text-3);
+}
+.cal-dia.hoy {
+  box-shadow: inset 0 0 0 2px var(--tito);
+}
+.cal-dia.elegido {
+  background: var(--text);
+  color: var(--bg);
+}
+
+.leyenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  margin-top: 12px;
+  font-size: 11px;
+  color: var(--text-2);
+}
+.leyenda span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.leyenda i {
+  width: 11px;
+  height: 11px;
+  border-radius: 4px;
+}
+.leyenda .rojo {
+  background: rgba(255, 122, 47, 0.6);
+}
+.leyenda .azul {
+  background: rgba(59, 108, 240, 0.7);
+}
+.leyenda .apagado {
+  background: rgba(255, 255, 255, 0.15);
+}
+.leyenda .libre {
+  border: 1.5px dashed var(--text-3);
+}
+.leyenda .hoy {
+  box-shadow: inset 0 0 0 2px var(--tito);
+}
+
+.libre-btn {
+  min-height: 44px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.libre-btn:disabled {
+  color: var(--text-3);
+  cursor: default;
+}
+
+/* ---------- Permitidos ---------- */
+
+.billetera {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 20px 16px;
+}
+.billetera-num {
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.permitido-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.costo {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+}
+.canjear {
+  margin-top: 12px;
+  width: 100%;
+  min-height: 46px;
+  border: none;
+  border-radius: 999px;
+  background: var(--tito);
+  color: #1a1400;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.canje-ok {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 20px;
+  background: rgba(255, 210, 63, 0.1);
+  border: 1px solid rgba(255, 210, 63, 0.3);
+  font-weight: 600;
+}
+
+.aviso {
+  position: fixed;
+  left: 50%;
+  bottom: calc(max(16px, env(safe-area-inset-bottom)) + 76px);
+  transform: translateX(-50%);
+  width: min(400px, calc(100% - 32px));
+  padding: 12px 16px;
+  border-radius: 16px;
+  background: #3a1d1d;
+  border: 1px solid rgba(255, 120, 120, 0.3);
+  font-size: 13px;
+  z-index: 20;
+}

@@ -4,6 +4,7 @@ import {
   esHito,
   estadosPorDia,
   faltaParaPermitido,
+  formatoDia,
   hoyEn,
   inicioDeSemana,
   sumarDias,
@@ -126,5 +127,11 @@ describe('faltaParaPermitido', () => {
   it('calcula lo que falta y nunca da negativo', () => {
     expect(faltaParaPermitido(4000, 'chico')).toBe(1250)
     expect(faltaParaPermitido(9000, 'grande')).toBe(0)
+  })
+})
+
+describe('formatoDia', () => {
+  it('escribe en castellano con mayúscula inicial', () => {
+    expect(formatoDia('2026-10-10', { weekday: 'long', day: 'numeric', month: 'long' })).toBe('Sábado, 10 de octubre')
   })
 })

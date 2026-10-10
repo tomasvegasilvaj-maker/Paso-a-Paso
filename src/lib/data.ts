@@ -1,7 +1,7 @@
 // Acceso a los datos de Supabase. Las reglas de la racha están en racha.ts.
 import { supabase } from './supabase'
 import type { Tables } from './database.types'
-import { calcularRacha, estadosPorDia, hoyEn, type Day, type Permitido } from './racha'
+import type { Day, Permitido } from './racha'
 
 export type Actividad = Tables<'activities'>
 export type Completada = Tables<'completions'>
@@ -78,13 +78,4 @@ export async function getPuntosPorDia(): Promise<Record<Day, number>> {
   const { data, error } = await db().from('daily_points').select('day, points')
   if (error) throw error
   return Object.fromEntries(data.map((r) => [r.day ?? '', r.points ?? 0]))
-}
-
-/** Todo lo que necesita el fueguito y el calendario en una sola carga. */
-export async function getResumen() {
-  const [perfil, puntosPorDia, diasLibres] = await Promise.all([getPerfil(), getPuntosPorDia(), getDiasLibres()])
-  const hoy = hoyEn(perfil.timezone)
-  const desde = hoyEn(perfil.timezone, new Date(perfil.created_at))
-  const entrada = { puntosPorDia, diasLibres, desde, hoy }
-  return { hoy, racha: calcularRacha(entrada), calendario: estadosPorDia(entrada), puntosPorDia }
 }

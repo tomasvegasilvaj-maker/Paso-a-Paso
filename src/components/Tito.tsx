@@ -3,20 +3,36 @@ import './Tito.css'
 
 export type TitoAnim = 'idle' | 'rie' | 'saluda' | 'guino' | 'salta'
 
+/** amarillo = normal; rojo = llegó a 2000; azul = no llegó ayer; apagado = racha en 0 (doc 02). */
+export type TitoEstado = 'amarillo' | 'rojo' | 'azul' | 'apagado'
+
+// Luz, color y sombra del degradé, y el brillo de alrededor.
+const COLORES: Record<TitoEstado, [string, string, string, string]> = {
+  amarillo: ['#fff4b0', '#ffd23f', '#e0a300', '255,210,63'],
+  rojo: ['#ffc2a8', '#ff5a3c', '#c8261b', '255,90,60'],
+  azul: ['#a9c2ff', '#3b6cf0', '#1d379a', '59,108,240'],
+  apagado: ['#c4c4c4', '#7c7c80', '#4a4a4e', '0,0,0'],
+}
+
 type Props = {
   anim: TitoAnim
   size?: number
   glow?: boolean
+  /** Solo el Tito de la tarjeta cambia de color; el logo queda siempre amarillo. */
+  estado?: TitoEstado
 }
 
-/** Tito amarillo (el del logo). Los estados rojo, azul y apagado llegan con la tarjeta de puntos. */
-export function Tito({ anim, size = 180, glow = true }: Props) {
+export function Tito({ anim, size = 180, glow = true, estado = 'amarillo' }: Props) {
   const id = useId().replace(/:/g, '')
   const fill = `url(#tito-g-${id})`
+  const [luz, color, sombra, brillo] = COLORES[estado]
+  const dormido = estado === 'apagado'
+  // En azul se achica (doc 02).
+  if (estado === 'azul') size *= 0.8
 
   return (
     <svg
-      className={`tito ${anim}`}
+      className={`tito ${dormido ? 'dormido' : anim}`}
       width={size}
       height={(size * 225) / 200}
       viewBox="0 0 200 225"
@@ -25,13 +41,13 @@ export function Tito({ anim, size = 180, glow = true }: Props) {
     >
       <defs>
         <radialGradient id={`tito-g-${id}`} cx="38%" cy="40%" r="70%">
-          <stop offset="0%" stopColor="#fff4b0" />
-          <stop offset="55%" stopColor="#ffd23f" />
-          <stop offset="100%" stopColor="#e0a300" />
+          <stop offset="0%" stopColor={luz} />
+          <stop offset="55%" stopColor={color} />
+          <stop offset="100%" stopColor={sombra} />
         </radialGradient>
         <radialGradient id={`tito-glow-${id}`} cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="rgba(255,210,63,0.32)" />
-          <stop offset="100%" stopColor="rgba(255,210,63,0)" />
+          <stop offset="0%" stopColor={`rgba(${brillo},0.32)`} />
+          <stop offset="100%" stopColor={`rgba(${brillo},0)`} />
         </radialGradient>
       </defs>
       {glow && <ellipse cx="100" cy="128" rx="98" ry="98" fill={`url(#tito-glow-${id})`} />}
@@ -65,7 +81,16 @@ export function Tito({ anim, size = 180, glow = true }: Props) {
         </g>
         <path className="m-s" d="M91 156 Q100 164 109 156" fill="none" stroke="#2a1a04" strokeWidth="4" strokeLinecap="round" />
         <path className="m-o" d="M88 153 Q100 172 112 153 Z" fill="#2a1a04" />
+        <g className="e-z" fill="none" stroke="#2a1a04" strokeWidth="4.5" strokeLinecap="round">
+          <path d="M71 136 Q80 142 89 136" />
+          <path d="M111 136 Q120 142 129 136" />
+        </g>
       </g>
+      {dormido && (
+        <text className="zz" x="160" y="40" fill="#8b8b88" fontSize="34" fontWeight="700">
+          z
+        </text>
+      )}
     </svg>
   )
 }

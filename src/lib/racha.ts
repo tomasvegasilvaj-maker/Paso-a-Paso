@@ -33,6 +33,12 @@ export function hoyEn(timeZone: string, ahora: Date = new Date()): Day {
   return new Intl.DateTimeFormat('en-CA', { timeZone, year: 'numeric', month: '2-digit', day: '2-digit' }).format(ahora)
 }
 
+/** Fecha legible en castellano con la primera letra en mayúscula ("Sábado, 10 de octubre"). */
+export function formatoDia(day: Day, opciones: Intl.DateTimeFormatOptions): string {
+  const s = new Date(`${day}T12:00:00Z`).toLocaleDateString('es-AR', { ...opciones, timeZone: 'UTC' })
+  return s.charAt(0).toUpperCase() + s.slice(1)
+}
+
 export function sumarDias(day: Day, n: number): Day {
   const d = new Date(`${day}T00:00:00Z`)
   d.setUTCDate(d.getUTCDate() + n)

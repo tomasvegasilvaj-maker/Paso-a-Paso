@@ -38,7 +38,7 @@ El login pide permiso de **lectura** de Google Calendar, porque en la v1 se mues
 src/
   lib/          cliente de Supabase, sesión, datos (data.ts) y reglas de racha (racha.ts)
   components/   Tito y la barra inferior
-  screens/      entrada (login) y el armazón con las 4 secciones
+  screens/      entrada (login), el armazón y las pantallas Hoy, Progreso, Calendario y Permitidos
 supabase/migrations/  tablas, permisos (RLS) y reglas de la base
 public/icons/   ícono de la app (cara de Tito); los PNG se generan con scripts/generate-icons.mjs
 ```
@@ -51,6 +51,6 @@ Las reglas del producto, las pantallas y las animaciones están en los documento
 
 1. ✅ PWA base + login con Google + Supabase
 2. ✅ Modelo de datos y reglas de puntos/racha
-3. Pantallas
+3. ✅ Pantallas Hoy, Progreso, Calendario y Permitidos (faltan eventos de Google Calendar, resumen semanal y pantalla de Tito)
 4. Animaciones del doc 03
 5. Notificaciones (pg_cron + Edge Function + Web Push)
