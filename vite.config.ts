@@ -4,6 +4,8 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vite.dev/config/
 export default defineConfig({
+  // En GitHub Pages la app vive en /Paso-a-Paso/ (lo activa el workflow de publicación).
+  base: process.env.GITHUB_PAGES ? '/Paso-a-Paso/' : '/',
   plugins: [
     react(),
     VitePWA({
@@ -15,7 +17,7 @@ export default defineConfig({
         short_name: 'Paso a Paso',
         description: 'Sumá puntos, cuidá tu fuego.',
         lang: 'es-AR',
-        start_url: '/',
+        // start_url y scope salen de `base`, así sirve igual en localhost y en GitHub Pages.
         display: 'standalone',
         orientation: 'portrait',
         background_color: '#0b0b0c',
@@ -29,7 +31,11 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
+        // Recibe los avisos push y abre la app al tocarlos (public/push-sw.js).
+        importScripts: ['push-sw.js'],
       },
+      // Service worker también en `npm run dev`, para poder probar los avisos en la compu.
+      devOptions: { enabled: true },
     }),
   ],
 })

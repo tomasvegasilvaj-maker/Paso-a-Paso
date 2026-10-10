@@ -28,9 +28,17 @@ El archivo `.env` ya trae la URL y la clave publicable del proyecto de Supabase 
 2. **Google Cloud:** en [console.cloud.google.com](https://console.cloud.google.com) creá un proyecto, configurá la pantalla de consentimiento (tipo *External*, en modo prueba, con tu cuenta como tester) y habilitá la **Google Calendar API**.
 3. Creá una credencial **OAuth client ID** de tipo *Web application*. En *Authorized redirect URIs* poné la URL de callback que muestra Supabase en *Authentication > Sign In / Providers > Google* (es `https://izdfvzjkypcqxuspsxsm.supabase.co/auth/v1/callback`).
 4. En Supabase, activá el proveedor **Google** y pegá el Client ID y el Client Secret.
-5. En Supabase, *Authentication > URL Configuration*: agregá `http://localhost:5173` (y más adelante la URL donde se publique la app) en *Redirect URLs*.
+5. En Supabase, *Authentication > URL Configuration*: agregá `http://localhost:5173` y `https://tomasvegasilvaj-maker.github.io/Paso-a-Paso/` en *Redirect URLs*.
 
 El login pide permiso de **lectura** de Google Calendar, porque en la v1 se muestran los eventos en el calendario de la app. Como la app de Google queda en modo prueba, Google muestra un aviso de "app no verificada" la primera vez: es normal para uso personal.
+
+## Publicación y avisos
+
+La app se publica sola en **https://tomasvegasilvaj-maker.github.io/Paso-a-Paso/** con cada cambio en `main` (workflow `Publicar`). Para eso, en GitHub: *Settings > Pages > Source: GitHub Actions* (una sola vez).
+
+Los avisos push (doc 01) salen de la función `avisos` de Supabase (`supabase/functions/avisos`), que pg_cron llama cada 5 minutos. Las claves (el secreto del cron y el par VAPID) se generan y quedan dentro de Supabase Vault; no hay que configurar nada a mano. En la app se activan con la campanita de arriba. En iPhone primero hay que agregar la app a la pantalla de inicio.
+
+`supabase/functions/avisos/racha.ts` es una copia de `src/lib/racha.ts` (un test avisa si dejan de ser iguales).
 
 ## Estructura
 
@@ -53,4 +61,4 @@ Las reglas del producto, las pantallas y las animaciones están en los documento
 2. ✅ Modelo de datos y reglas de puntos/racha
 3. ✅ Pantallas Hoy, Progreso, Calendario y Permitidos (faltan eventos de Google Calendar, resumen semanal y pantalla de Tito)
 4. ✅ Animaciones del doc 03 (faltan las del resumen semanal y de la carga de Google Calendar, que llegan con esas pantallas)
-5. Notificaciones (pg_cron + Edge Function + Web Push)
+5. ✅ Notificaciones (pg_cron + Edge Function + Web Push) y publicación en GitHub Pages
